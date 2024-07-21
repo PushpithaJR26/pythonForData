@@ -1,0 +1,113 @@
+import uuid
+import random
+
+class DataSecurityApp:
+    def __init__(self):
+        self.data_records= {}  
+        self.fake_data_records = []  
+        self.recipient_data ={}  
+        self.fake_data_access_log = [] 
+
+    def generate_unique_id(self):
+        return str(uuid.uuid4())
+
+    def add_data(self, recipient, data):
+        if not data:
+            print("Error: Data cannot be empty.")
+            return
+
+        unique_id = self.generate_unique_id()
+        self.data_records[unique_id]= data
+        if recipient not in self.recipient_data:
+            self.recipient_data[recipient]= []
+        self.recipient_data[recipient].append(unique_id)
+        print(f"Data added for {recipient} with ID {unique_id}")
+
+    def create_fake_data(self, num_records):
+        for _ in range(num_records):
+            fake_id = self.generate_unique_id()
+            fake_data= f"fake_data_{fake_id}"
+            self.fake_data_records.append(fake_data)
+        print(f"{num_records} fake data records created.")
+
+    def mix_data(self):
+        all_data =list(self.data_records.keys()) + self.fake_data_records
+        random.shuffle(all_data)
+        return all_data
+
+    def check_access(self, data_id):
+        if data_id in self.fake_data_records:
+            self.fake_data_access_log.append(data_id)
+            print(f"Access to fake data detected: {data_id}")
+        elif data_id in self.data_records:
+            print(f"Access to real data: {data_id}")
+        else:
+            print(f"Data ID {data_id} not recognized.")
+
+    def trace_data(self, recipient):
+        if recipient in self.recipient_data:
+            data_ids= self.recipient_data[recipient]
+            print(f"Recipient {recipient} received data IDs: {data_ids}")
+        else:
+            print(f"No data found for recipient {recipient}")
+
+    def display_data(self):
+        print("\nReal Data Records:")
+        for unique_id, data in self.data_records.items():
+            print(f"ID: {unique_id}, Data: {data}")
+
+        print("\nFake Data Records:")
+        for fake_data in self.fake_data_records:
+            print(fake_data)
+
+    def run(self):
+        while True:
+            print("\n~~~~~~~~~~MENU~~~~~~~~~~")
+            print("*************************")
+            print("1. Register a new data:")
+            print("2. Create a fake data:")
+            print("3. Mix the data(shuffle):")
+            print("4. Check data accessibilty:")
+            print("5. Trace the data:")
+            print("6. Display data: ")
+            print("7. Exit")
+            print("*************************\n")
+            
+            choice = input("Enter your choice: ")
+
+            if choice == '1':
+                recipient = input("Enter recipient name: ")
+                data = input("Enter recipient's date of birth{dd/mm/yyyy}: ")
+                data= input("Enter recipient's adress: ")
+                data=input("Enter unique identification number(Adhar ID): ")
+                self.add_data(recipient, data)
+
+            elif choice == '2':
+                num_records = int(input("Enter number of fake data records to create: "))
+                self.create_fake_data(num_records)
+
+            elif choice == '3':
+                mixed_data = self.mix_data()
+                print("Mixed Data: ", mixed_data)
+
+            elif choice == '4':
+                data_id = input("Enter data ID to check: ")
+                self.check_access(data_id)
+
+            elif choice == '5':
+                recipient = input("Enter recipient name to trace: ")
+                self.trace_data(recipient)
+
+            elif choice == '6':
+                self.display_data()
+
+            elif choice == '7':
+                print("Exiting...")
+                break
+
+            else:
+                print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    app = DataSecurityApp()
+    app.run()
